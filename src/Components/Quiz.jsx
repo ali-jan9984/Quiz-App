@@ -9,6 +9,7 @@ export default function Quiz() {
     const [showScore, setShowScore] = useState(false);
 
     const decodeEntities = (html) => {
+        console.log(html);
         const textarea = document.createElement("textarea");
         textarea.innerHTML = html;
         return textarea.value;
@@ -18,37 +19,36 @@ export default function Quiz() {
         async function fetchQuestions() {
             try {
                 const response = await axios.get('https://opentdb.com/api.php?amount=10');
-                const formattedQuestions = response.data.results.map((question) => ({
+                const formattedQuestions = response.data.results.map((question)=>({
                     ...question,
-                    question: decodeEntities(question.question),
-                    incorrect_answers: question.incorrect_answers.map(decodeEntities),
-                    correct_answer: decodeEntities(question.correct_answer),
-                }));
+                    question:decodeEntities(question.question),
+                    incorrect_answers:question.incorrect_answers.map(decodeEntities),
+                    correct_answer:decodeEntities(question.correct_answer),
+                }))
                 setQuestions(formattedQuestions);
             } catch (error) {
-                console.error("Error fetching data", error);
+                console.error("Error while fetching data", error);
             }
         }
         fetchQuestions();
     }, []);
 
-    const handleClick = (answer) => {
-        if (answer === questions[currentQuestion].correct_answer) {
-            setScore(score + 1);
+    const handleClick = (answer) =>{
+        if (answer === questions[currentQuestion].correct_answer){
+            setScore(score +1)
         }
-        if (currentQuestion < questions.length - 1) {
-            setCurrentQuestion(currentQuestion + 1);
-        } else {
-            setShowScore(true);
+        if (currentQuestion < questions.length -1){
+            setCurrentQuestion(currentQuestion +1);
+        }else{
+            setShowScore(true)
         }
-    };
+    }
 
     const restartQuiz = () => {
         setQuestions([]);
         setCurrentQuestion(0);
         setScore(0);
         setShowScore(false);
-        fetchQuestions();
     };
 
     return (
